@@ -1,0 +1,25 @@
+{
+  "name": "discordbot",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/discordbot",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "rootDir": "apps/discordbot",
+        "main": "src/index.ts",
+        "tsConfig": "apps/discordbot/tsconfig.json",
+        "outputPath": "dist/apps/discordbot"
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/js:node",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "discordbot:build"
+      }
+    }
+  }
+}
