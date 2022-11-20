@@ -1,8 +1,8 @@
-import { ActivityType, Client, REST, Routes } from "discord.js";
-import { CommandList } from "../commands";
+import { ActivityType, Client, REST, Routes } from 'discord.js';
+import { CommandList } from '../commands';
 
 export const onReady = async (bot: Client) => {
-  const rest = new REST({ version: "9" }).setToken(
+  const rest = new REST({ version: '9' }).setToken(
     process.env.DISCORD_BOT_TOKEN as string
   );
 
@@ -10,12 +10,12 @@ export const onReady = async (bot: Client) => {
 
   await rest.put(
     Routes.applicationGuildCommands(
-      bot.user?.id || "missing id",
+      bot.user?.id || 'missing id',
       process.env.DISCORD_GUILD_ID as string
     ),
     { body: commandData }
   );
 
-  bot.user?.setActivity("your balls", { type: ActivityType.Watching });
-  console.log("Discord ready!");
+  bot.user?.setActivity('with your balls', { type: ActivityType.Playing });
+  console.log(`${bot.user?.tag} bot running!`);
 };
