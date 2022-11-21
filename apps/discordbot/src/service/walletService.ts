@@ -2,18 +2,14 @@ import { EWalletCreate, Contact } from "./models/walletCreate";
 import { EWallet } from "./models/wallet";
 import { CustomerCreate } from "./models/customerCreate";
 import { ErrorResponse } from "./models/error";
-import dotenv from 'dotenv';
+import { getRequestHeaders } from "./authService";
 import axios from "axios";
 
 // TODO: extraxt to env
-const uri = 'https://sandboxapi.rapyd.net/v1/user';
-const access_key = '4C15ED203D6CA6141CF8';
-const salt = 'b142ee4dcf99085d5507091a';
-const timestamp = '1668855267';
-const signature = 'NWZlYjA3MGRkYTM4MTFmNDNmMjk5NGE5Yjg5M2ZiMzQ5ZThhMDcxZjhkY2IxMzNjZGMwMjJiNzJmZWI3OGNiZg==';
+const uri = `${process.env.BASE_URI}/v1/user`;
 
 const instance = axios.create({
-  baseURL: uri,
+  baseURL: process.env.BASE_URI,
 });
 
 export const createEWallet = async (customerData: CustomerCreate): Promise<EWallet | ErrorResponse> => {
@@ -33,14 +29,8 @@ export const createEWallet = async (customerData: CustomerCreate): Promise<EWall
 
   // TODO: extract to some common place
   const config = {
-    headers: { 
-      'Content-Type': 'application/json',
-      'access_key': access_key,
-      'salt': salt,
-      'timestamp': timestamp,
-      'signature': signature,
-    },
-  };
+    headers: getRequestHeaders("post", uri, walletToCreate)
+  }
 
   try {
     const response = await instance.post<EWallet>(uri, walletToCreate, config);
@@ -69,14 +59,8 @@ export const retrieveEWallet = async (walletId: string): Promise<EWallet | Error
 
   // TODO: extract to some common place
   const config = {
-    headers: { 
-      'Content-Type': 'application/json',
-      'access_key': access_key,
-      'salt': salt,
-      'timestamp': timestamp,
-      'signature': signature,
-    },
-  };
+    headers: getRequestHeaders("get", `${uri}/${walletId}`, "")
+  }
 
   try {
     const response = await instance.get<EWallet>(`${uri}/${walletId}`, config);
@@ -103,14 +87,8 @@ export const retrieveEWallet = async (walletId: string): Promise<EWallet | Error
 export const updateEWallet = async (eWallet: EWallet): Promise<EWallet | ErrorResponse> => {
   // TODO: extract to some common place
   const config = {
-    headers: { 
-      'Content-Type': 'application/json',
-      'access_key': access_key,
-      'salt': salt,
-      'timestamp': timestamp,
-      'signature': signature,
-    },
-  };
+    headers: getRequestHeaders("put", uri, eWallet)
+  }
 
   try {
     const response = await instance.put<EWallet>(uri, eWallet, config);
