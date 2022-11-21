@@ -8,9 +8,9 @@ import axios from "axios";
 // TODO: extraxt to env
 const uri = `${process.env.BASE_URI}/v1/user`;
 
-const instance = axios.create({
-  baseURL: process.env.BASE_URI,
-});
+//const instance = axios.create({
+//  baseURL: process.env.BASE_URI,
+//});
 
 export const createEWallet = async (customerData: CustomerCreate): Promise<EWallet | ErrorResponse> => {
   // TODO: implement
@@ -29,11 +29,11 @@ export const createEWallet = async (customerData: CustomerCreate): Promise<EWall
 
   // TODO: extract to some common place
   const config = {
-    headers: getRequestHeaders("post", uri, walletToCreate)
+    headers: getRequestHeaders("POST", "/v1/user", walletToCreate)
   }
 
   try {
-    const response = await instance.post<EWallet>('/v1/user', walletToCreate, config); // user
+    const response = await axios.post<EWallet>(uri, walletToCreate, config); // uri
 
     // TODO: remove log
     console.log(response.data)
@@ -50,6 +50,7 @@ export const createEWallet = async (customerData: CustomerCreate): Promise<EWall
 
     // TODO: remove log
     console.log(err.msg);
+    console.log(e);
     return err;
   }
 };
@@ -63,7 +64,7 @@ export const retrieveEWallet = async (walletId: string): Promise<EWallet | Error
   }
 
   try {
-    const response = await instance.get<EWallet>(`/v1/user/${walletId}`, config); // uri
+    const response = await axios.get<EWallet>(`${uri}/${walletId}`, config); // uri
 
     // TODO: remove log
     console.log(response.data)
@@ -91,7 +92,7 @@ export const updateEWallet = async (eWallet: EWallet): Promise<EWallet | ErrorRe
   }
 
   try {
-    const response = await instance.put<EWallet>('/v1/user', eWallet, config); // uri
+    const response = await axios.put<EWallet>(uri, eWallet, config); // uri
 
     // TODO: remove log
     console.log(response.data)
