@@ -33,7 +33,7 @@ export const createEWallet = async (customerData: CustomerCreate): Promise<EWall
   }
 
   try {
-    const response = await instance.post<EWallet>(uri, walletToCreate, config);
+    const response = await instance.post<EWallet>('/v1/user', walletToCreate, config); // user
 
     // TODO: remove log
     console.log(response.data)
@@ -63,7 +63,7 @@ export const retrieveEWallet = async (walletId: string): Promise<EWallet | Error
   }
 
   try {
-    const response = await instance.get<EWallet>(`${uri}/${walletId}`, config);
+    const response = await instance.get<EWallet>(`/v1/user/${walletId}`, config); // uri
 
     // TODO: remove log
     console.log(response.data)
@@ -91,7 +91,7 @@ export const updateEWallet = async (eWallet: EWallet): Promise<EWallet | ErrorRe
   }
 
   try {
-    const response = await instance.put<EWallet>(uri, eWallet, config);
+    const response = await instance.put<EWallet>('/v1/user', eWallet, config); // uri
 
     // TODO: remove log
     console.log(response.data)
