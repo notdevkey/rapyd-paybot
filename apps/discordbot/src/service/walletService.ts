@@ -60,8 +60,10 @@ export const retrieveEWallet = async (walletId: string): Promise<EWallet | Error
 
   // TODO: extract to some common place
   const config = {
-    headers: getRequestHeaders("get", `${uri}/${walletId}`, "")
+    headers: getRequestHeaders("get", `/v1/user/${walletId.trim()}`, "")
   }
+
+  console.log(config);
 
   try {
     const response = await axios.get<EWallet>(`${uri}/${walletId}`, config); // uri
@@ -76,11 +78,12 @@ export const retrieveEWallet = async (walletId: string): Promise<EWallet | Error
     if (axios.isAxiosError(e)) {
       err.msg = e.message;
     } else {
-      err.msg = "Unexpected Error occurerd";
+      err.msg = `Unexpected Error occurerd: ${e}`;
     }
 
     // TODO: remove log
     console.log(err.msg);
+    console.log(e);
     return err;
   }
 };
