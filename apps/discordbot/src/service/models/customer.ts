@@ -17,3 +17,10 @@ export interface ContactsData {
   verificationStatus: string;
   sendNotifications: boolean;
 }
+
+export interface PBCustomer {
+  id: string;
+  name: string;
+  ewallet: string;
+  ewalletReferenceId: string;
+}
