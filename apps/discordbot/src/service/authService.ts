@@ -35,5 +35,6 @@ export const getRequestHeaders = (method: string, uri: string, data: any) => {
     'salt': salt.toString(),
     'timestamp': timestamp,
     'signature': getSignature(method, uri, data),
+    'idempotency': idempotency,
   };
 }
