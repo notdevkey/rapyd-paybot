@@ -7820,6 +7820,11 @@ pkg-dir@^4.1.0, pkg-dir@^4.2.0:
   dependencies:
     find-up "^4.0.0"
 
+pocketbase@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/pocketbase/-/pocketbase-0.8.0.tgz#f2c8b1062169c183c16fbc48cbe31e93d9e4bb20"
+  integrity sha512-LMuV46YcuG4bDZ1DNeUkvbaS5MWLZ1gpmccn6rYIg50n1bQ/BZJ9ip6SMJqo7xRGkPSL4kk1RP/zCkiG6g37Lg==
+
 portfinder@^1.0.28:
   version "1.0.32"
   resolved "https://registry.npmjs.org/portfinder/-/portfinder-1.0.32.tgz"

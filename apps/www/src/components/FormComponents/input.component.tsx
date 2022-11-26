@@ -20,7 +20,7 @@ export const Input = forwardRef(
     const [content, setContent] = useState<string>('');
     return (
       <div>
-        <div className="relative max-w-md rounded-md bg-blue-dark-400 group">
+        <div className="relative max-w-md bg-gray-100 rounded-md group">
           <p
             className={`absolute text-sm duration-200 -translate-y-1/2 pointer-events-none left-4 top-1/2 text-blue-dark-100 ${
               content

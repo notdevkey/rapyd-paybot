@@ -6,6 +6,8 @@ export function validateEnv() {
     'ACCESS_KEY',
     'SECRET_KEY',
     'BASE_URI',
+    'HOSTNAME_DEV',
+    'HOSTNAME_PROD',
   ];
 
   for (const envVar of requiredVars) {
