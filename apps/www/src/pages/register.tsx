@@ -1,5 +1,5 @@
 import { Input } from '@/components';
-import { useRapydAxios } from '@/hooks';
+import { usePocketbase, useRapydAxios } from '@/hooks';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
@@ -19,7 +19,8 @@ interface RegisterFormData {
 }
 
 export default function Register() {
-  const axios = useRapydAxios();
+  const rapydAxios = useRapydAxios();
+  const pocketbase = usePocketbase();
 
   const {
     register,
@@ -30,8 +31,19 @@ export default function Register() {
   const registerMutation = useMutation(
     ['wallet'],
     async (data: RegisterFormData) => {
-      // TODO: send wallet register data
-      const res = await axios.post(`${process.env.BASE_URI}`, {});
+      const { data: rapydData } = await rapydAxios.post(`/user`, {
+        ewallet_reference_id: data.discordTag,
+      });
+      console.log(rapydData);
+
+      const res = await pocketbase.collection('users').create({
+        email: data.email,
+        username: data.discordTag,
+        password: data.password,
+        passwordConfirm: data.password,
+      });
+      // const res = await pocketbase.collection('wallets').getList(1, 10);
+      console.log(res);
     }
   );
 
@@ -51,11 +63,19 @@ export default function Register() {
         helperText={errors.email ? errors.email?.message : ''}
       />
       <Input
-        {...register('email')}
-        placeholder="Email"
-        error={!!errors.email}
-        helperText={errors.email ? errors.email?.message : ''}
+        {...register('discordTag')}
+        placeholder="Discord tag"
+        error={!!errors.discordTag}
+        helperText={errors.email ? errors.discordTag?.message : ''}
       />
+      <Input
+        {...register('password')}
+        placeholder="Password"
+        error={!!errors.password}
+        type="password"
+        helperText={errors.password ? errors.password?.message : ''}
+      />
+      <button>Register</button>
     </form>
   );
 }
