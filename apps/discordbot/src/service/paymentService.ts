@@ -1,13 +1,18 @@
 import { RapydTransactionCreate, PaymentCreate, RapydTransactionMetadata } from './models/paymentCreate';
 import { Transaction } from './models/payment';
 import { ErrorResponse } from './models/error';
-import { getRequestHeaders } from './authService';
+//import { getRequestHeaders } from './authService';
+//import { getRequestHeaders } from '@rapyd-paybot/rapyd';
 import { EWallet } from './models/wallet';
 
 import { retrieveEWallet } from './walletService';
 import { retrieveCustomer } from './customerService';
+
 import axios from 'axios';
+import rapydApi from './rapydApi';
+
 import { PBCustomer } from './models/customer';
+//import Rapyd from './rapydService';
 
 const uri = `${process.env.BASE_URI}/v1/account/transfer`;
 
@@ -37,8 +42,22 @@ export const makeTransaction = async (
     console.log((receiverAccount as PBCustomer).ewallet);
 
     // check if both sender and receiver wallets exist
-    const senderWallet = await retrieveEWallet((senderAccount as PBCustomer).ewallet);
-    const receiverWallet = await retrieveEWallet((receiverAccount as PBCustomer).ewallet);
+    // const senderWallet = await retrieveEWallet((senderAccount as PBCustomer).ewallet);
+    // const receiverWallet = await retrieveEWallet((receiverAccount as PBCustomer).ewallet);
+
+    // const senderWallet = await new Rapyd(
+    //   process.env.ACCESS_KEY!, 
+    //   process.env.SECRET_KEY!, 
+    //   true
+    // ).getWallet((senderAccount as PBCustomer).ewallet);
+    const senderWallet = await rapydApi.wallets.details((senderAccount as PBCustomer).ewallet);
+
+    // const receiverWallet = await new Rapyd(
+    //   process.env.ACCESS_KEY!, 
+    //   process.env.SECRET_KEY!, 
+    //   true
+    // ).getWallet((senderAccount as PBCustomer).ewallet);
+    const receiverWallet = await rapydApi.wallets.details((receiverAccount as PBCustomer).ewallet);
 
     // TODO: this if statement is a bit sus, recheck later
     if (
@@ -64,15 +83,18 @@ export const makeTransaction = async (
       metadata: paymentToCreateMetadata,
     }
 
-    const config = {
-      headers: getRequestHeaders("POST", "/v1/account/transfer", paymentToCreate)
-    }
-
-    const response = await axios.post<Transaction>(uri, paymentToCreate, config); // uri
+    // const response = await axios.post<Transaction>(uri, paymentToCreate, config); // uri
+    const response = await rapydApi.payments.create(paymentToCreate);
+    // const response = await new Rapyd(
+    //   process.env.ACCESS_KEY!, 
+    //   process.env.SECRET_KEY!, 
+    //   true
+    // ).createPayment(paymentToCreate);
 
     // TODO: remove log
-    console.log(response.data);
-    return response.data;
+    //console.log(response.data);
+    //return response.data;
+    return response;
   } catch (e) {
     const err: ErrorResponse = {
       msg: ''
