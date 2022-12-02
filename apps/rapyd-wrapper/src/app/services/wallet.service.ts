@@ -1,6 +1,9 @@
+import RapydResponse from '../../models/rapyd.model';
 import { Wallet, WalletCreate } from '../../models/wallet.model';
 
-export const createWallet = async (wallet: WalletCreate): Promise<Wallet> => {
+export const createWallet = async (
+  wallet: WalletCreate
+): Promise<RapydResponse<Wallet>> => {
   try {
     // TODO: create user here
 
@@ -10,4 +13,4 @@ export const createWallet = async (wallet: WalletCreate): Promise<Wallet> => {
   } catch (e) {
     throw new Error(e);
   }
-}
+};

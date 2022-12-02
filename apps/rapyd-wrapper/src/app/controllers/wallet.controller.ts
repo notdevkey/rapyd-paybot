@@ -24,7 +24,7 @@ export const createWalletHandler = async (
     };
 
     const wallet = await createWallet(walletToCreate);
-    return res.send(wallet);
+    return res.send(wallet.data);
   } catch (e) {
     console.log(e);
     return res.status(500).send(e.message);
