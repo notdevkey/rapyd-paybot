@@ -2,8 +2,8 @@
 
 import { Request, Response } from 'express';
 import { WalletCreate, ContactCreate } from '../../models/wallet.model';
-import { CreateWalletInput } from '../schema/wallet.schema';
-import { createWallet } from '../services/wallet.service';
+import { CreateWalletInput, RetrieveWalletInput } from '../schema/wallet.schema';
+import { createWallet, retrieveWallet } from '../services/wallet.service';
 
 export const createWalletHandler = async (
   req: Request<{}, {}, CreateWalletInput['body']>, 
@@ -24,6 +24,20 @@ export const createWalletHandler = async (
     };
 
     const wallet = await createWallet(walletToCreate);
+    return res.send(wallet.data);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(e.message);
+  }
+}
+
+export const retrieveWalletHandler = async (
+  req: Request<RetrieveWalletInput['params']>, 
+  res: Response
+  ) => {
+  try {
+    const id = req.params.walletId;
+    const wallet = await retrieveWallet(id);
     return res.send(wallet.data);
   } catch (e) {
     console.log(e);

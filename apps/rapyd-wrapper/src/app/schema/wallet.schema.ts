@@ -1,5 +1,13 @@
 import { object, string, TypeOf } from 'zod';
 
+const reqParams = {
+  params: object({
+    walletId: string({
+      required_error: 'ewalletId is required'
+    }),
+  }),
+};
+
 export const createWalletSchema = object({
   body: object({
     ewallet_reference_id: string({
@@ -31,4 +39,9 @@ export const createWalletSchema = object({
   }),
 });
 
+export const retrieveWalletSchema = object({
+  ...reqParams,
+});
+
 export type CreateWalletInput = TypeOf<typeof createWalletSchema>;
+export type RetrieveWalletInput = TypeOf<typeof retrieveWalletSchema>;
