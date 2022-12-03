@@ -12,7 +12,7 @@ export const getRequestHeaders = (method: string, url: string, body: JSON = null
   const access_key = process.env.ACCESS_KEY;
   const secret_key = process.env.SECRET_KEY;
 
-  const salt = randomBytes(12).toString('hex');
+  const salt = randomBytes(8).toString('hex');
   const timestamp = Math.floor(Date.now() / 1000).toString();
   const signature = generateSignature(
     method,
@@ -25,6 +25,7 @@ export const getRequestHeaders = (method: string, url: string, body: JSON = null
   );
   
   return {
+    'Accept': '*/*',
     'Content-Type': 'application/json',
     'access_key': access_key,
     'salt': salt,
@@ -45,7 +46,7 @@ const generateSignature = (
   let body_string = '';
   if (body) {
     body_string = JSON.stringify(body);
-    body_string = body_string == '{}' ? '' : body_string;
+    body_string = body_string == '{}' ? '' : body_string.trim();
   }
 
   return hashSignature(
