@@ -2,8 +2,8 @@
 
 import { Request, Response } from 'express';
 import { TransactionCreate } from '../../models/payment.model';
-import { CreatePaymentInput } from '../schema/payment.schema';
-import { createPayment } from '../services/payment.service';
+import { CreatePaymentInput, RetrievePaymentInput } from '../schema/payment.schema';
+import { createPayment, retrievePayment } from '../services/payment.service';
 
 export const createPaymentHandler = async (
   req: Request<{}, {}, CreatePaymentInput['body']>,
@@ -18,6 +18,22 @@ export const createPaymentHandler = async (
     };
 
     const payment = await createPayment(paymentToCreate);
+    return res.send(payment.data);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(e.message);
+  }
+};
+
+export const retrievePaymentHandler = async (
+  req: Request<RetrievePaymentInput['params']>,
+  res: Response
+) => {
+  try {
+    const pid = req.params.paymentId;
+    const wid = req.params.walletId;
+
+    const payment = await retrievePayment(wid, pid);
     return res.send(payment.data);
   } catch (e) {
     console.log(e);
