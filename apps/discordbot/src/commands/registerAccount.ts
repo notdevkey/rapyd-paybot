@@ -1,11 +1,9 @@
 import { APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../interfaces/Command';
 
-import { EWallet } from '../service/models/wallet';
-import { CustomerCreate } from '../service/models/customerCreate';
-import { ErrorResponse } from '../service/models/error';
+import { CustomerCreate, EWallet } from '../service/models/wallet';
 
-import { createEWallet } from '../service/walletService';
+import WalletService from '../service/walletService';
 
 export const registerAccount: Command = {
   data: new SlashCommandBuilder()
@@ -38,35 +36,36 @@ export const registerAccount: Command = {
     const phone = interaction.options.get('phone', true).value;
 
     // TODO: verify user inputed data
+    const walletService = new WalletService();
 
     // create account
     const userToCreate: CustomerCreate = {
-      ewallet_reference_id: user.tag,
+      ds_tag: user.tag,
       phone_number: `${countryCode as string}${phone as string}`,
       email: email as string,
-      first_name: user.username
+      username: user.username
     }
 
     let message: APIEmbedField | APIEmbedField[] = [];
     let title: string = '';
     let description: string = '';
-    const walletCreated = await createEWallet(userToCreate);
+    const walletCreated = await walletService.createEWallet(userToCreate);
 
     // TODO: test code, remove later
-    if ((walletCreated as EWallet).data != null) {
-      const result = (walletCreated as EWallet).data;
+    if (walletCreated.data != null) {
+      const result = walletCreated.data;
       message = [
         { name: 'Wallet status', value: result.status },
         { name: 'Wallet type', value: result.type },
-        { name: 'Wallet reference ID', value: result.ewalletReferenceID },
-        { name: 'Name', value: result.contacts.data[0].firstName },
-        { name: 'Email', value: result.contacts.data[0].email },
+        { name: 'Wallet reference ID', value: result.ewallet_reference_id },
+        { name: 'Name', value: result.contacts.first_name },
+        { name: 'Email', value: result.contacts.email },
       ];
       title = 'Account Created!';
       description = `Hey, ${user.username}! Welcome to Rapyd Paybot!\nYour data below:`;
-    } else if ((walletCreated as ErrorResponse).msg != null) {
+    } else {
       message = [
-        { name: 'Error', value: (walletCreated as ErrorResponse).msg }
+        { name: 'Error', value: walletCreated.status.message }
       ];
       title = 'Failed to Create Account';
       description = `Hey, ${user.username}! Some error occured when creating Rapyd Paybot account!`;

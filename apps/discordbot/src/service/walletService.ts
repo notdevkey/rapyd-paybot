@@ -1,117 +1,92 @@
-import { EWalletCreate, Contact } from "./models/walletCreate";
-import { EWallet } from "./models/wallet";
-import { CustomerCreate } from "./models/customerCreate";
-import { ErrorResponse } from "./models/error";
-import { getRequestHeaders } from "./authService";
-import axios from "axios";
+import {
+  Contact,
+  CustomerCreate,
+  EWallet,
+  EWalletCreate,
+} from './models/wallet';
+import { RapydResponse, RapydResponseStatus } from './models/rapydResponse';
 
-// TODO: extraxt to env
-const uri = `${process.env.BASE_URI}/v1/user`;
+import { validateEnv } from '../utils/validate-env';
 
-//const instance = axios.create({
-//  baseURL: process.env.BASE_URI,
-//});
+import axios, { AxiosInstance } from 'axios';
 
-export const createEWallet = async (customerData: CustomerCreate): Promise<EWallet | ErrorResponse> => {
-  // TODO: implement
-  const walletContact: Contact = {
-    phone_number: customerData.phone_number,
-    email: customerData.email,
-    first_name: customerData.first_name,
-    contact_type: "personal",
+class WalletService {
+  private uri!: string;
+  private client!: AxiosInstance;
+
+  constructor() {
+    // TODO: handle invalid env variables
+    if (!validateEnv) return;
+    this.uri = `${process.env.WRAPPER_URI}/api`;
+    this.client = axios.create({
+      baseURL: this.uri,
+    });
+  }
+
+  public createEWallet = async (
+    customerData: CustomerCreate
+  ): Promise<RapydResponse<EWallet>> => {
+    const walletContact: Contact = {
+      phone_number: customerData.phone_number,
+      email: customerData.email,
+      first_name: customerData.username,
+      contact_type: 'personal',
+    };
+
+    const walletToCreate: EWalletCreate = {
+      ewallet_reference_id: customerData.ds_tag,
+      type: 'person',
+      contact: walletContact,
+    };
+
+    let walletResponse: RapydResponse<EWallet> | null;
+    await this.client
+      .post<RapydResponse<EWallet>>('/wallets', walletToCreate)
+      .then((response) => {
+        walletResponse = response.data;
+        console.log(walletResponse);
+      })
+      .catch((e) => {
+        if (axios.isAxiosError(e)) {
+          console.error(e.message);
+        } else {
+          console.error('Unexpected Error occurerd');
+        }
+        walletResponse = e;
+      });
+
+    return walletResponse!;
   };
-  
-  const walletToCreate: EWalletCreate = {
-    ewallet_reference_id: customerData.ewallet_reference_id,
-    type: "person",
-    contact: walletContact
+
+  public retrieveEWallet = async (
+    walletId: string
+  ): Promise<RapydResponse<EWallet>> => {
+    let walletResponse: RapydResponse<EWallet> | null;
+    await this.client
+      .get<RapydResponse<EWallet>>(`/wallets/${walletId}`)
+      .then((response) => {
+        walletResponse = response.data;
+        console.log(walletResponse);
+      })
+      .catch((e) => {
+        if (axios.isAxiosError(e)) {
+          console.error(e.message);
+        } else {
+          console.error('Unexpected Error occurerd');
+        }
+        walletResponse = e;
+      });
+
+    return walletResponse!;
   };
 
-  // TODO: extract to some common place
-  const config = {
-    headers: getRequestHeaders("POST", "/v1/user", walletToCreate)
-  }
+  public updateEWallet = async (
+    eWallet: EWallet
+  ): Promise<RapydResponse<EWallet>> => {
+    // TODO: implement update on server
 
-  try {
-    const response = await axios.post<EWallet>(uri, walletToCreate, config); // uri
-
-    // TODO: remove log
-    console.log(response.data)
-    return response.data;
-  } catch(e) {
-    const err: ErrorResponse = {
-      msg: ''
-    };
-    if (axios.isAxiosError(e)) {
-      err.msg = e.message;
-    } else {
-      err.msg = "Unexpected Error occurerd";
-    }
-
-    // TODO: remove log
-    console.log(err.msg);
-    console.log(e);
-    return err;
-  }
-};
-
-export const retrieveEWallet = async (walletId: string): Promise<EWallet | ErrorResponse> => {
-  // TODO: implement
-
-  // TODO: extract to some common place
-  const config = {
-    headers: getRequestHeaders("get", `/v1/user/${walletId.trim()}`, "")
-  }
-
-  console.log(config);
-
-  try {
-    const response = await axios.get<EWallet>(`${uri}/${walletId}`, config); // uri
-
-    // TODO: remove log
-    console.log(response.data)
-    return response.data;
-  } catch (e) {
-    const err: ErrorResponse = {
-      msg: ''
-    };
-    if (axios.isAxiosError(e)) {
-      err.msg = e.message;
-    } else {
-      err.msg = `Unexpected Error occurerd: ${e}`;
-    }
-
-    // TODO: remove log
-    console.log(err.msg);
-    console.log(e);
-    return err;
-  }
-};
-
-export const updateEWallet = async (eWallet: EWallet): Promise<EWallet | ErrorResponse> => {
-  // TODO: extract to some common place
-  const config = {
-    headers: getRequestHeaders("put", uri, eWallet)
-  }
-
-  try {
-    const response = await axios.put<EWallet>(uri, eWallet, config); // uri
-
-    // TODO: remove log
-    console.log(response.data)
-    return response.data;
-  } catch (e) {
-    const err: ErrorResponse = {
-      msg: ''
-    };
-    if (axios.isAxiosError(e)) {
-      err.msg = e.message;
-    } else {
-      err.msg = "Unexpected Error occurerd";
-    }
-
-    // TODO: remove log
-    console.log(err.msg);
-    return err;
-  }
+    return {} as RapydResponse<EWallet>;
+  };
 }
+
+export default WalletService;
