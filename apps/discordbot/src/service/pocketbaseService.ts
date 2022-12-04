@@ -1,13 +1,13 @@
-import { CustomerCreate } from "./models/customerCreate";
-import { PBCustomer } from "./models/customer";
-import { ErrorResponse } from "./models/error";
-import { getRequestHeaders } from "./authService";
+import { CustomerCreate } from "./models/wallet";
+import { PBCustomer } from "./models/pocketbase";
 import axios from "axios";
 
 // TODO: change to PocketBase uri
 const uri = `${process.env.BASE_URI}/v1/user`;
 
-export const retrieveCustomer = async (discordTag: string): Promise<PBCustomer | ErrorResponse> => {
+// TODO: retrieve customer data from PocketBase
+// TODO: create PocketBase service
+export const retrieveCustomer = async (discordTag: string): Promise<PBCustomer> => {
   // TODO: implement this method
   // TODO: remove hardcoded values
   if (discordTag == "devkey#1604") {
@@ -27,8 +27,6 @@ export const retrieveCustomer = async (discordTag: string): Promise<PBCustomer |
       ewalletReferenceId: 'Lisais83#9674',
     } as PBCustomer;
   } else {
-    return {
-      msg: 'Oppa privet, a nodokļus kurš maksās?',
-    } as ErrorResponse;
+    return {} as PBCustomer;
   }
 }

@@ -17,7 +17,7 @@ export interface RapydTransactionCreate {
   amount: number;
   currency: string;
   destination_ewallet: string;
-  metadata: RapydTransactionMetadata;
+  //metadata?: RapydTransactionMetadata;
 }
 
 export interface RapydTransactionMetadata {

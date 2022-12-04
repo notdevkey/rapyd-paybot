@@ -1,4 +1,4 @@
-export interface WalletData {
+export interface EWallet {
   id: string;
   status: string;
   accounts: any[];
