@@ -1,9 +1,7 @@
 import { APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { makeTransaction } from '../service/paymentService';
 import { Command } from '../interfaces/Command';
-import { PaymentCreate } from '../service/models/paymentCreate';
-import { Transaction } from "../service/models/payment";
-import { ErrorResponse } from '../service/models/error';
+import { PaymentCreate, Transaction } from "../service/models/payment";
+import PaymentService from '../service/paymentService';
 
 export const requestPayment: Command = {
   data: new SlashCommandBuilder()
@@ -34,6 +32,8 @@ export const requestPayment: Command = {
 
     const receiver = interaction.options.getUser('user');
 
+    const paymentService = new PaymentService();
+
     let message: APIEmbedField | APIEmbedField[] = [];
     let title: string = '';
     let description: string = '';
@@ -55,24 +55,24 @@ export const requestPayment: Command = {
       receiver: receiver!.tag,
       message: paymentMessage
     }
-    const paymentCreated = await makeTransaction(transaction);
+    const paymentCreated = await paymentService.makeTransaction(transaction);
     // TODO: check if payment success
     // TODO: only for test purposes, remove sensitive data later
-    if ((paymentCreated as Transaction).data != null) {
-      const result = (paymentCreated as Transaction).data;
+    if (paymentCreated.data != null) {
+      const result = paymentCreated.data;
       message = [
-        { name: 'Sender wallet', value: result.sourceEwalletID },
-        { name: 'Receiver wallet', value: result.destinationEwalletID },
-        { name: 'Transaction ID', value: result.id },
+        { name: 'Sender wallet', value: result.source_ewallet_id },
+        { name: 'Receiver wallet', value: result.destination_ewallet_id },
+        { name: 'Transaction ID', value: result.source_transaction_id },
         { name: 'Ammount', value: result.amount.toString() },
-        { name: 'Currency', value: result.currencyCode },
+        { name: 'Currency', value: result.currency_code },
         { name: 'Transaction Status', value: result.status },
       ];
       title = 'Transaction successful!';
       description = `Hey, ${user.username}! The money has been successfully sent to ${receiver.username}!`;
-    } else if ((paymentCreated as ErrorResponse).msg != null) {
+    } else {
       message = [
-        { name: 'Error', value: (paymentCreated as ErrorResponse).msg }
+        { name: 'Error', value: paymentCreated.status.message }
       ];
       title = 'Transactiond Failed';
       description = `Hey, ${user.username}! Some error occured when creating Transaction to ${receiver.username}!`;
