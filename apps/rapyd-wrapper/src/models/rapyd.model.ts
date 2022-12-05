@@ -1,7 +1,6 @@
 interface RapydResponse<T> {
   status: RapydResponseStatus;
   data: T;
-  url: string;
 }
 
 interface RapydResponseStatus {
