@@ -19,8 +19,8 @@ class PaymentService {
 
   constructor() {
     if (!validateEnv) return;
-    this.uri = `${process.env.BASE_URI}/v1/account/transfer`;
     this.walletService = new WalletService();
+    this.uri = `${process.env.WRAPPER_URI}/api`;
     this.client = axios.create({
       baseURL: this.uri,
     });
@@ -70,23 +70,24 @@ class PaymentService {
         //metadata: paymentToCreateMetadata,
       };
 
-      console.log(paymentToCreate);
+      console.log('Payment to be made:', paymentToCreate);
 
       let paymentResponse: RapydResponse<Transaction> | null;
-      // await this.client
-      //   .post<RapydResponse<Transaction>>('/payments', paymentToCreate)
-      //   .then((response) => {
-      //     paymentResponse = response.data;
-      //     console.log(paymentResponse);
-      //   })
-      //   .catch((e) => {
-      //     if (axios.isAxiosError(e)) {
-      //       console.error(e.message);
-      //     } else {
-      //       console.error('Unexpected Error occurerd');
-      //     }
-      //     paymentResponse = e;
-      //   });
+      await this.client
+        .post<RapydResponse<Transaction>>('/payments', paymentToCreate)
+        .then((response) => {
+          paymentResponse = response.data;
+          console.log('Payment response: ', paymentResponse.data);
+          console.log(paymentResponse.status);
+        })
+        .catch((e) => {
+          if (axios.isAxiosError(e)) {
+            console.error(e.message);
+          } else {
+            console.error('Unexpected Error occurerd');
+          }
+          paymentResponse = e;
+        });
 
       return paymentResponse!;
     } catch (e) {

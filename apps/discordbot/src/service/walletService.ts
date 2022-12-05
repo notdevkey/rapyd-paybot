@@ -44,7 +44,9 @@ class WalletService {
       .post<RapydResponse<EWallet>>('/wallets', walletToCreate)
       .then((response) => {
         walletResponse = response.data;
-        console.log(walletResponse);
+        // TODO: test log, remove
+        console.log('Wallet response:', walletResponse.data);
+        console.log(walletResponse.status);
       })
       .catch((e) => {
         if (axios.isAxiosError(e)) {
@@ -66,7 +68,9 @@ class WalletService {
       .get<RapydResponse<EWallet>>(`/wallets/${walletId}`)
       .then((response) => {
         walletResponse = response.data;
-        console.log(walletResponse);
+        // TODO: test log, remove
+        console.log(walletResponse.data);
+        console.log(walletResponse.status);
       })
       .catch((e) => {
         if (axios.isAxiosError(e)) {
