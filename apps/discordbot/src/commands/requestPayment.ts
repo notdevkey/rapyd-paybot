@@ -13,7 +13,7 @@ export const requestPayment: Command = {
         .setDescription('User to request money from')
         .setRequired(true)
     )
-    .addIntegerOption((option) =>
+    .addNumberOption((option) =>
       option
         .setName('amount')
         .setDescription('The amount you want to send')
@@ -70,9 +70,16 @@ export const requestPayment: Command = {
       ];
       title = 'Transaction successful!';
       description = `Hey, ${user.username}! The money has been successfully sent to ${receiver.username}!`;
-    } else {
+    } else if (paymentCreated.status != null) {
       message = [
         { name: 'Error', value: paymentCreated.status.message }
+      ];
+      title = 'Transactiond Failed';
+      description = `Hey, ${user.username}! Some error occured when creating Transaction to ${receiver.username}!`;
+    } else {
+      // TODO: introduce proper error handling
+      message = [
+        { name: 'Error', value: 'unknown error' }
       ];
       title = 'Transactiond Failed';
       description = `Hey, ${user.username}! Some error occured when creating Transaction to ${receiver.username}!`;

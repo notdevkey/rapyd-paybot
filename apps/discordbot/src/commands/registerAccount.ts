@@ -58,8 +58,8 @@ export const registerAccount: Command = {
         { name: 'Wallet status', value: result.status },
         { name: 'Wallet type', value: result.type },
         { name: 'Wallet reference ID', value: result.ewallet_reference_id },
-        { name: 'Name', value: result.contacts.first_name },
-        { name: 'Email', value: result.contacts.email },
+        { name: 'Name', value: result.contacts.data[0].first_name },
+        { name: 'Email', value: result.contacts.data[0].email },
       ];
       title = 'Account Created!';
       description = `Hey, ${user.username}! Welcome to Rapyd Paybot!\nYour data below:`;
