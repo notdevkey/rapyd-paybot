@@ -17,8 +17,9 @@ export const createPayment = async (
       baseURL: process.env.BASE_URI,
     });
 
-    let paymentCreated: RapydResponse<Transaction>;
-    await client
+    //let paymentCreated: RapydResponse<Transaction>;
+
+    const { data: paymentCreated } = await client
       .post<RapydResponse<Transaction>>('/account/transfer', payment, {
         headers: getRequestHeaders(
           'post',
@@ -26,13 +27,13 @@ export const createPayment = async (
           JSON.parse(JSON.stringify(payment))
         ),
       })
-      .then((response) => {
-        console.log(response);
-        paymentCreated = response.data;
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+
+      // .then((response) => {
+      //   paymentCreated = response.data;
+      // })
+      // .catch((e) => {
+      //   console.error(e);
+      // });
 
     return paymentCreated;
   } catch (e) {
@@ -53,8 +54,8 @@ export const retrievePayment = async (
       baseURL: process.env.BASE_URI,
     });
 
-    let paymentRetrieved: RapydResponse<Transaction>;
-    await client
+    // let paymentRetrieved: RapydResponse<Transaction>;
+    const { data: paymentRetrieved } = await client
       .get<RapydResponse<Transaction>>(`/user/${walletId}/transactions/${paymentId}`, {
         headers: getRequestHeaders(
           'get',
@@ -62,13 +63,12 @@ export const retrievePayment = async (
           JSON.parse(JSON.stringify(''))
         ),
       })
-      .then((response) => {
-        console.log(response);
-        paymentRetrieved = response.data;
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+      // .then((response) => {
+      //   paymentRetrieved = response.data;
+      // })
+      // .catch((e) => {
+      //   console.error(e);
+      // });
 
     return paymentRetrieved;
   } catch (e) {

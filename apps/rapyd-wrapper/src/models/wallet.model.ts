@@ -6,7 +6,14 @@ export interface Wallet {
   type: string;
   metadata: string;
   ewallet_reference_id: string;
-  contacts: Contacts[];
+  contacts: ContactsData;
+}
+
+export interface ContactsData {
+  data: Contacts[];
+  hasMore: boolean;
+  totalCount: number;
+  url: string;
 }
 
 export interface Contacts {

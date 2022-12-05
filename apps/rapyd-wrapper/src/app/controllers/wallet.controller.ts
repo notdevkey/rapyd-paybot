@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 import { Request, Response } from 'express';
-import { WalletCreate, ContactCreate } from '../../models/wallet.model';
+import RapydResponse from '../../models/rapyd.model';
+import { WalletCreate, ContactCreate, Wallet } from '../../models/wallet.model';
 import { CreateWalletInput, RetrieveWalletInput } from '../schema/wallet.schema';
 import { createWallet, retrieveWallet } from '../services/wallet.service';
 
 export const createWalletHandler = async (
   req: Request<{}, {}, CreateWalletInput['body']>, 
-  res: Response
+  res: Response<RapydResponse<Wallet>>
   ) => {
   try {
     const contactToCreate: ContactCreate = {
@@ -24,7 +25,7 @@ export const createWalletHandler = async (
     };
 
     const wallet = await createWallet(walletToCreate);
-    return res.send(wallet.data);
+    return res.send(wallet);
   } catch (e) {
     console.log(e);
     return res.status(500).send(e.message);
@@ -33,12 +34,12 @@ export const createWalletHandler = async (
 
 export const retrieveWalletHandler = async (
   req: Request<RetrieveWalletInput['params']>, 
-  res: Response
+  res: Response<RapydResponse<Wallet>>
   ) => {
   try {
     const id = req.params.walletId;
     const wallet = await retrieveWallet(id);
-    return res.send(wallet.data);
+    return res.send(wallet);
   } catch (e) {
     console.log(e);
     return res.status(500).send(e.message);

@@ -26,9 +26,9 @@ export const createWallet = async (
     await client.post<RapydResponse<Wallet>>('/user', wallet, {
       headers: getRequestHeaders('post', '/v1/user', JSON.parse(JSON.stringify(wallet)))
     }).then((response) => {
-      console.log(response);
       walletCreated = response.data;
-    }).catch((e) => {
+    })
+    .catch((e) => {
       console.error(e);
     });
 
@@ -56,9 +56,9 @@ export const retrieveWallet = async (
     await client.get<RapydResponse<Wallet>>(`/user/${walletId}`, {
       headers: getRequestHeaders('get', `/v1/user/${walletId}`, JSON.parse(JSON.stringify('')))
     }).then((response) => {
-      console.log(response);
       walletRetrieved = response.data;
-    }).catch((e) => {
+    })
+    .catch((e) => {
       console.error(e);
     });
 
