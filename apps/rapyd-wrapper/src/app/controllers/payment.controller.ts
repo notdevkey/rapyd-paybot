@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 import { Request, Response } from 'express';
-import { Transaction, TransactionCreate } from '../../models/payment.model';
+import { Transaction, TransactionCreate, TransactionSetStatus } from '../../models/payment.model';
 import RapydResponse from '../../models/rapyd.model';
-import { CreatePaymentInput, RetrievePaymentInput } from '../schema/payment.schema';
-import { createPayment, retrievePayment } from '../services/payment.service';
+import { CreatePaymentInput, RetrievePaymentInput, SetPaymentStatusInput } from '../schema/payment.schema';
+import { createPayment, retrievePayment, setPaymentStatus } from '../services/payment.service';
 
 export const createPaymentHandler = async (
   req: Request<{}, {}, CreatePaymentInput['body']>,
@@ -38,6 +38,26 @@ export const retrievePaymentHandler = async (
     const wid = req.params.walletId;
 
     const payment = await retrievePayment(wid, pid);
+    return res.send(payment);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(e.message);
+  }
+};
+
+export const setPaymentStatusHandler = async (
+  req: Request<{}, {}, SetPaymentStatusInput['body']>,
+  res: Response<RapydResponse<Transaction>>
+) => {
+  try {
+    console.log(req.body);
+
+    const paymentToSetStatus: TransactionSetStatus = {
+      id: req.body.id,
+      status: req.body.status,
+    };
+
+    const payment = await setPaymentStatus(paymentToSetStatus);
     return res.send(payment);
   } catch (e) {
     console.log(e);

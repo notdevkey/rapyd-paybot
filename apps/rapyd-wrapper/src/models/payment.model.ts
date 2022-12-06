@@ -18,3 +18,10 @@ export interface TransactionCreate {
   currency: string;
   destination_ewallet: string;
 }
+
+// set status
+// TODO: add metadata
+export interface TransactionSetStatus {
+  id: string;
+  status: string;
+}

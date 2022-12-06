@@ -1,5 +1,9 @@
 import axios from 'axios';
-import { Transaction, TransactionCreate } from '../../models/payment.model';
+import {
+  Transaction,
+  TransactionCreate,
+  TransactionSetStatus,
+} from '../../models/payment.model';
 import RapydResponse from '../../models/rapyd.model';
 
 import { validateEnv } from '../../utils/validate-env';
@@ -19,21 +23,22 @@ export const createPayment = async (
 
     //let paymentCreated: RapydResponse<Transaction>;
 
-    const { data: paymentCreated } = await client
-      .post<RapydResponse<Transaction>>('/account/transfer', payment, {
-        headers: getRequestHeaders(
-          'post',
-          '/v1/account/transfer',
-          JSON.parse(JSON.stringify(payment))
-        ),
-      })
+    const { data: paymentCreated } = await client.post<
+      RapydResponse<Transaction>
+    >('/account/transfer', payment, {
+      headers: getRequestHeaders(
+        'post',
+        '/v1/account/transfer',
+        JSON.parse(JSON.stringify(payment))
+      ),
+    });
 
-      // .then((response) => {
-      //   paymentCreated = response.data;
-      // })
-      // .catch((e) => {
-      //   console.error(e);
-      // });
+    // .then((response) => {
+    //   paymentCreated = response.data;
+    // })
+    // .catch((e) => {
+    //   console.error(e);
+    // });
 
     return paymentCreated;
   } catch (e) {
@@ -55,22 +60,60 @@ export const retrievePayment = async (
     });
 
     // let paymentRetrieved: RapydResponse<Transaction>;
-    const { data: paymentRetrieved } = await client
-      .get<RapydResponse<Transaction>>(`/user/${walletId}/transactions/${paymentId}`, {
-        headers: getRequestHeaders(
-          'get',
-          `/v1/user/${walletId}/transactions/${paymentId}`,
-          JSON.parse(JSON.stringify(''))
-        ),
-      })
-      // .then((response) => {
-      //   paymentRetrieved = response.data;
-      // })
-      // .catch((e) => {
-      //   console.error(e);
-      // });
+    const { data: paymentRetrieved } = await client.get<
+      RapydResponse<Transaction>
+    >(`/user/${walletId}/transactions/${paymentId}`, {
+      headers: getRequestHeaders(
+        'get',
+        `/v1/user/${walletId}/transactions/${paymentId}`,
+        JSON.parse(JSON.stringify(''))
+      ),
+    });
+    // .then((response) => {
+    //   paymentRetrieved = response.data;
+    // })
+    // .catch((e) => {
+    //   console.error(e);
+    // });
 
     return paymentRetrieved;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+export const setPaymentStatus = async (
+  paymentStatus: TransactionSetStatus
+): Promise<RapydResponse<Transaction>> => {
+  try {
+    console.log(paymentStatus);
+
+    if (!validateEnv) return;
+
+    const client = axios.create({
+      baseURL: process.env.BASE_URI,
+    });
+
+    //let paymentCreated: RapydResponse<Transaction>;
+
+    const { data: paymentStatusUpdated } = await client.post<
+      RapydResponse<Transaction>
+    >('/account/transfer/response', paymentStatus, {
+      headers: getRequestHeaders(
+        'post',
+        '/v1/account/transfer/response',
+        JSON.parse(JSON.stringify(paymentStatus))
+      ),
+    });
+
+    // .then((response) => {
+    //   paymentCreated = response.data;
+    // })
+    // .catch((e) => {
+    //   console.error(e);
+    // });
+
+    return paymentStatusUpdated;
   } catch (e) {
     throw new Error(e);
   }

@@ -1,9 +1,9 @@
 import { Express, Request, Response } from 'express';
-import { createPaymentHandler, retrievePaymentHandler } from './app/controllers/payment.controller';
+import { createPaymentHandler, retrievePaymentHandler, setPaymentStatusHandler } from './app/controllers/payment.controller';
 import { createWalletHandler, retrieveWalletHandler } from './app/controllers/wallet.controller';
 
 import validateResource from './app/middleware/validateResource';
-import { createPaymentSchema, retrievePaymentSchema } from './app/schema/payment.schema';
+import { createPaymentSchema, retrievePaymentSchema, setPaymentStatusSchema } from './app/schema/payment.schema';
 import { createWalletSchema, retrieveWalletSchema } from './app/schema/wallet.schema';
 
 const routes = (app: Express) => {
@@ -16,6 +16,8 @@ const routes = (app: Express) => {
   // payment endpoints
   app.post('/api/payments', validateResource(createPaymentSchema), createPaymentHandler);
   app.get('/api/:walletId/payments/:paymentId', validateResource(retrievePaymentSchema), retrievePaymentHandler);
+  
+  app.post('/api/payments/status', validateResource(setPaymentStatusSchema), setPaymentStatusHandler);
 
 }
 
