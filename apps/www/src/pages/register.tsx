@@ -1,7 +1,9 @@
 import { Input } from '@/components';
-import { usePocketbase, useRapydAxios } from '@/hooks';
+import { usePocketbase } from '@/hooks';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { getRequestHeaders } from '@rapyd-paybot/rapyd';
 import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -19,7 +21,7 @@ interface RegisterFormData {
 }
 
 export default function Register() {
-  const rapydAxios = useRapydAxios();
+  // const rapydAxios = useRapydAxios();
   const pocketbase = usePocketbase();
 
   const {
@@ -31,9 +33,21 @@ export default function Register() {
   const registerMutation = useMutation(
     ['wallet'],
     async (data: RegisterFormData) => {
-      const { data: rapydData } = await rapydAxios.post(`/user`, {
+      const requestData = {
         ewallet_reference_id: data.discordTag,
-      });
+      };
+      const headers = getRequestHeaders(
+        'post',
+        '/user',
+        requestData,
+        process.env.NEXT_PUBLIC_SECRET_KEY,
+        process.env.NEXT_PUBLIC_ACCESS_KEY
+      );
+      const { data: rapydData } = await axios.post(
+        `https://sandboxapi.rapyd.net/v1/user`,
+        requestData,
+        { headers }
+      );
       console.log(rapydData);
 
       const res = await pocketbase.collection('users').create({

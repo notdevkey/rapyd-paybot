@@ -21,12 +21,8 @@ export default function RapydAxiosProvider({
           process.env.NEXT_PUBLIC_ACCESS_KEY
         );
 
-        config.baseURL = 'https://sandboxapi.rapyd.net/v1/';
-        config.headers['Content-Type'] = headers['Content-Type'];
-        config.headers['access_key'] = headers.accessKey;
-        config.headers['salt'] = headers.salt.toString();
-        config.headers['timestamp'] = headers.timestamp;
-        config.headers['signature'] = headers.signature;
+        config.baseURL = 'https://sandboxapi.rapyd.net:443/v1';
+        config.headers = { ...config.headers, ...headers };
         return config;
       },
       (err) => Promise.reject(err)
