@@ -1,15 +1,15 @@
-// payment created webhook
-export interface TransactionCreatedWebhookResponse {
+export interface TransactionWebhookResponse {
   id: string;
-  data: TransactionCreatedWebhookData;
-  type: string;
+  data: TransactionWebhookData;
+  type: WebhookType;
   status: string;
   created_at: number;
   trigger_operation_id: string;
 }
 
-export interface TransactionCreatedWebhookData {
+export interface TransactionWebhookData {
   id: string;
+  status: string;
   amount: number;
   currency: string;
   timestamp: string;
@@ -21,4 +21,7 @@ export interface TransactionCreatedWebhookData {
   destination_transaction_id: string;
 }
 
-// payment responded webhook
+export enum WebhookType {
+  TRANSFER_FUNDS_BETWEEN_EWALLETS_RESPONSE,
+  TRANSFER_FUNDS_BETWEEN_EWALLETS_CREATED
+}
