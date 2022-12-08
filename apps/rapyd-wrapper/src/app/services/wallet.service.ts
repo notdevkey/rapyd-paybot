@@ -35,9 +35,10 @@ export const createWallet = async (
       .then(async (response) => {
         await prisma.wallet.create({
           data: {
+            id: response.data.data.id,
+            referenceId: wallet.ewallet_reference_id,
             username: wallet.contact.first_name,
             password: wallet.contact.password,
-            referenceId: response.data.data.ewallet_reference_id,
           },
         });
         walletCreated = response.data;
@@ -90,4 +91,8 @@ export const retrieveWallet = async (
 
 export const getAllWallets = async () => {
   return prisma.wallet.findMany();
+};
+
+export const deleteWallet = async (username: string) => {
+  return prisma.wallet.delete({ where: { referenceId: username } });
 };

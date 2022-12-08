@@ -35,7 +35,7 @@ class PaymentService {
       const receiverAccount = await retrieveCustomer(transaction.receiver); // must return Lisais83's wallet
 
       // check if both sender and receiver accounts exist
-      if (senderAccount == null || receiverAccount == null) {
+      if (!senderAccount || !receiverAccount) {
         // TODO: return correct error response
         return {} as RapydResponse<Transaction>;
       }

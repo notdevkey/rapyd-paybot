@@ -5,10 +5,12 @@ import RapydResponse from '../../models/rapyd.model';
 import { ContactCreate, Wallet, WalletCreate } from '../../models/wallet.model';
 import {
   CreateWalletInput,
+  DeleteWalletInput,
   RetrieveWalletInput,
 } from '../schema/wallet.schema';
 import {
   createWallet,
+  deleteWallet,
   getAllWallets,
   retrieveWallet,
 } from '../services/wallet.service';
@@ -56,4 +58,10 @@ export const retrieveWalletHandler = async (
 
 export const getAllWalletsHandler = async () => {
   return await getAllWallets();
+};
+
+export const deleteWalletHandler = async (
+  req: Request<{}, {}, DeleteWalletInput['body']>
+) => {
+  return await deleteWallet(req.body.username);
 };

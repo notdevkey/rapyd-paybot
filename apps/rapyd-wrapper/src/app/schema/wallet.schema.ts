@@ -53,6 +53,13 @@ export const retrieveWalletSchema = object({
   ...reqParams,
 });
 
+export const deleteWalletSchema = object({
+  body: object({
+    username: string({ required_error: 'Username is required' }),
+  }),
+});
+
 export type CreateWalletInput = TypeOf<typeof createWalletSchema>;
 export type RetrieveWalletInput = TypeOf<typeof retrieveWalletSchema>;
 export type GetAllWalletsInput = TypeOf<typeof getAllWalletsSchema>;
+export type DeleteWalletInput = TypeOf<typeof deleteWalletSchema>;

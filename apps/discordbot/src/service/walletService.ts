@@ -41,20 +41,9 @@ class WalletService {
       contact: walletContact,
     };
 
-    let walletResponse: RapydResponse<EWallet> | null;
-    const { data } = await this.client.post<RapydResponse<EWallet>>(
-      '/wallets',
-      walletToCreate
-    );
-    console.log(data);
-    if (data.status.status === 'SUCCESS') {
-      this.pb.collection('users').create({
-        username: customerData.ds_tag,
-        walletId: data.data.ewallet_reference_id,
-        password: walletContact.password,
-        passwordConfirm: walletContact.password,
-      });
-    }
+    const { data: walletResponse } = await this.client.post<
+      RapydResponse<EWallet>
+    >('/wallets', walletToCreate);
 
     return walletResponse!;
   };

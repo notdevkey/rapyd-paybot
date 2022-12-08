@@ -5,6 +5,7 @@ import {
 } from './app/controllers/payment.controller';
 import {
   createWalletHandler,
+  deleteWalletHandler,
   getAllWalletsHandler,
   retrieveWalletHandler,
 } from './app/controllers/wallet.controller';
@@ -16,6 +17,7 @@ import {
 } from './app/schema/payment.schema';
 import {
   createWalletSchema,
+  deleteWalletSchema,
   getAllWalletsSchema,
   retrieveWalletSchema,
 } from './app/schema/wallet.schema';
@@ -38,6 +40,11 @@ const routes = (app: Express) => {
     '/api/wallets/:walletId',
     validateResource(retrieveWalletSchema),
     retrieveWalletHandler
+  );
+  app.delete(
+    '/api/wallets',
+    validateResource(deleteWalletSchema),
+    deleteWalletHandler
   );
 
   // payment endpoints
