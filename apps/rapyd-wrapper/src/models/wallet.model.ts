@@ -41,6 +41,7 @@ export interface WalletCreate {
 export interface ContactCreate {
   phone_number: string;
   email: string;
+  password: string;
   first_name: string;
   contact_type: string;
 }

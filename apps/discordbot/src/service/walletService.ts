@@ -22,7 +22,6 @@ class WalletService {
     this.client = axios.create({
       baseURL: this.uri,
     });
-    this.pb = new Pocketbase('http://localhost:8090');
   }
 
   public createEWallet = async (
