@@ -5,12 +5,12 @@ import {
   Transaction,
 } from './models/payment';
 
-import WalletService from './walletService';
 import { retrieveCustomer } from './pocketbaseService';
+import WalletService from './walletService';
 
-import { RapydResponse } from './models/rapydResponse';
 import axios, { AxiosInstance } from 'axios';
 import { validateEnv } from '../utils/validate-env';
+import { RapydResponse } from './models/rapydResponse';
 
 class PaymentService {
   private uri!: string;

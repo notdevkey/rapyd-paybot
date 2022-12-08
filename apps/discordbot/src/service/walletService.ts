@@ -1,18 +1,19 @@
+import Pocketbase from 'pocketbase';
+import { validateEnv } from '../utils/validate-env';
+import { RapydResponse } from './models/rapydResponse';
 import {
   Contact,
   CustomerCreate,
   EWallet,
   EWalletCreate,
 } from './models/wallet';
-import { RapydResponse, RapydResponseStatus } from './models/rapydResponse';
-
-import { validateEnv } from '../utils/validate-env';
 
 import axios, { AxiosInstance } from 'axios';
 
 class WalletService {
   private uri!: string;
   private client!: AxiosInstance;
+  private pb!: Pocketbase;
 
   constructor() {
     // TODO: handle invalid env variables
@@ -21,6 +22,7 @@ class WalletService {
     this.client = axios.create({
       baseURL: this.uri,
     });
+    this.pb = new Pocketbase('http://localhost:8090');
   }
 
   public createEWallet = async (
@@ -30,6 +32,7 @@ class WalletService {
       phone_number: customerData.phone_number,
       email: customerData.email,
       first_name: customerData.username,
+      password: customerData.password,
       contact_type: 'personal',
     };
 
@@ -40,22 +43,19 @@ class WalletService {
     };
 
     let walletResponse: RapydResponse<EWallet> | null;
-    await this.client
-      .post<RapydResponse<EWallet>>('/wallets', walletToCreate)
-      .then((response) => {
-        walletResponse = response.data;
-        // TODO: test log, remove
-        console.log('Wallet response:', walletResponse.data);
-        console.log(walletResponse.status);
-      })
-      .catch((e) => {
-        if (axios.isAxiosError(e)) {
-          console.error(e.message);
-        } else {
-          console.error('Unexpected Error occurerd');
-        }
-        walletResponse = e;
+    const { data } = await this.client.post<RapydResponse<EWallet>>(
+      '/wallets',
+      walletToCreate
+    );
+    console.log(data);
+    if (data.status.status === 'SUCCESS') {
+      this.pb.collection('users').create({
+        username: customerData.ds_tag,
+        walletId: data.data.ewallet_reference_id,
+        password: walletContact.password,
+        passwordConfirm: walletContact.password,
       });
+    }
 
     return walletResponse!;
   };
