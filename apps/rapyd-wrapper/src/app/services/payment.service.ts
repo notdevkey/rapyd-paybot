@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
 import {
   Transaction,
@@ -8,6 +9,8 @@ import RapydResponse from '../../models/rapyd.model';
 
 import { validateEnv } from '../../utils/validate-env';
 import { getRequestHeaders } from '../services/rapyd.service';
+
+const prisma = new PrismaClient();
 
 export const createPayment = async (
   payment: TransactionCreate
@@ -20,25 +23,35 @@ export const createPayment = async (
     const client = axios.create({
       baseURL: process.env.BASE_URI,
     });
+    let paymentCreated;
+    try {
+      const { data } = await client.post<RapydResponse<Transaction>>(
+        '/account/transfer',
+        payment,
+        {
+          headers: getRequestHeaders(
+            'post',
+            '/v1/account/transfer',
+            JSON.parse(JSON.stringify(payment))
+          ),
+        }
+      );
+      paymentCreated = data;
+    } catch (e) {
+      console.log(e.response);
+    }
 
-    //let paymentCreated: RapydResponse<Transaction>;
-
-    const { data: paymentCreated } = await client.post<
-      RapydResponse<Transaction>
-    >('/account/transfer', payment, {
-      headers: getRequestHeaders(
-        'post',
-        '/v1/account/transfer',
-        JSON.parse(JSON.stringify(payment))
-      ),
+    await prisma.transaction.create({
+      data: {
+        amount: paymentCreated.data.amount,
+        from: {
+          connect: { id: paymentCreated.data.source_ewallet_id },
+        },
+        to: {
+          connect: { id: paymentCreated.data.destination_ewallet_id },
+        },
+      },
     });
-
-    // .then((response) => {
-    //   paymentCreated = response.data;
-    // })
-    // .catch((e) => {
-    //   console.error(e);
-    // });
 
     return paymentCreated;
   } catch (e) {

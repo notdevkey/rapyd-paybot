@@ -5,27 +5,36 @@ import {
   setPaymentStatusHandler,
 } from './app/controllers/payment.controller';
 import {
-  createWalletHandler,
-  retrieveWalletHandler,
-} from './app/controllers/wallet.controller';
-import {
   paymentWebhook,
 } from './app/controllers/webhook.controller';
+import {
+  createWalletHandler,
+  deleteWalletHandler,
+  getAllWalletsHandler,
+  retrieveWalletHandler,
+} from './app/controllers/wallet.controller';
 
 import validateResource from './app/middleware/validateResource';
 import {
   createPaymentSchema,
   retrievePaymentSchema,
-  setPaymentStatusSchema,
+  setPaymentStatusSchema
 } from './app/schema/payment.schema';
 import {
   createWalletSchema,
+  deleteWalletSchema,
+  getAllWalletsSchema,
   retrieveWalletSchema,
 } from './app/schema/wallet.schema';
 
 const routes = (app: Express) => {
   app.get('/check', (req: Request, res: Response) => res.sendStatus(200));
 
+  app.get(
+    '/api/wallets',
+    validateResource(getAllWalletsSchema),
+    getAllWalletsHandler
+  );
   // wallet endpoints
   app.post(
     '/api/wallets',
@@ -36,6 +45,11 @@ const routes = (app: Express) => {
     '/api/wallets/:walletId',
     validateResource(retrieveWalletSchema),
     retrieveWalletHandler
+  );
+  app.delete(
+    '/api/wallets',
+    validateResource(deleteWalletSchema),
+    deleteWalletHandler
   );
 
   // payment endpoints

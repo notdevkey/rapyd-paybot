@@ -1,18 +1,19 @@
+import Pocketbase from 'pocketbase';
+import { validateEnv } from '../utils/validate-env';
+import { RapydResponse } from './models/rapydResponse';
 import {
   Contact,
   CustomerCreate,
   EWallet,
   EWalletCreate,
 } from './models/wallet';
-import { RapydResponse, RapydResponseStatus } from './models/rapydResponse';
-
-import { validateEnv } from '../utils/validate-env';
 
 import axios, { AxiosInstance } from 'axios';
 
 class WalletService {
   private uri!: string;
   private client!: AxiosInstance;
+  private pb!: Pocketbase;
 
   constructor() {
     // TODO: handle invalid env variables
@@ -30,6 +31,7 @@ class WalletService {
       phone_number: customerData.phone_number,
       email: customerData.email,
       first_name: customerData.username,
+      password: customerData.password,
       contact_type: 'personal',
     };
 
@@ -39,23 +41,9 @@ class WalletService {
       contact: walletContact,
     };
 
-    let walletResponse: RapydResponse<EWallet> | null;
-    await this.client
-      .post<RapydResponse<EWallet>>('/wallets', walletToCreate)
-      .then((response) => {
-        walletResponse = response.data;
-        // TODO: test log, remove
-        console.log('Wallet response:', walletResponse.data);
-        console.log(walletResponse.status);
-      })
-      .catch((e) => {
-        if (axios.isAxiosError(e)) {
-          console.error(e.message);
-        } else {
-          console.error('Unexpected Error occurerd');
-        }
-        walletResponse = e;
-      });
+    const { data: walletResponse } = await this.client.post<
+      RapydResponse<EWallet>
+    >('/wallets', walletToCreate);
 
     return walletResponse!;
   };

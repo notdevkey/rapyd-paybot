@@ -1,7 +1,7 @@
 import { APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../interfaces/Command';
 
-import { CustomerCreate, EWallet } from '../service/models/wallet';
+import { CustomerCreate } from '../service/models/wallet';
 
 import WalletService from '../service/walletService';
 
@@ -17,6 +17,12 @@ export const registerAccount: Command = {
     )
     .addStringOption((option) =>
       option
+        .setName('password')
+        .setDescription('Password (atleast 6 characters)')
+        .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
         .setName('country_code')
         .setDescription('Your country code (e.g. +1)')
         .setRequired(true)
@@ -27,13 +33,14 @@ export const registerAccount: Command = {
         .setDescription('Your phone (for Multi-Factor authentication)')
         .setRequired(true)
     ),
-    
+
   run: async (interaction) => {
     await interaction.deferReply();
     const { user } = interaction;
     const email = interaction.options.get('email', true).value;
     const countryCode = interaction.options.get('country_code', true).value;
     const phone = interaction.options.get('phone', true).value;
+    const password = interaction.options.get('password', true).value;
 
     // TODO: verify user inputed data
     const walletService = new WalletService();
@@ -43,8 +50,9 @@ export const registerAccount: Command = {
       ds_tag: user.tag,
       phone_number: `${countryCode as string}${phone as string}`,
       email: email as string,
-      username: user.username
-    }
+      username: user.username,
+      password: password as string,
+    };
 
     let message: APIEmbedField | APIEmbedField[] = [];
     let title: string = '';
@@ -64,9 +72,7 @@ export const registerAccount: Command = {
       title = 'Account Created!';
       description = `Hey, ${user.username}! Welcome to Rapyd Paybot!\nYour data below:`;
     } else {
-      message = [
-        { name: 'Error', value: walletCreated.status.message }
-      ];
+      message = [{ name: 'Error', value: walletCreated.status.message }];
       title = 'Failed to Create Account';
       description = `Hey, ${user.username}! Some error occured when creating Rapyd Paybot account!`;
     }
@@ -75,7 +81,7 @@ export const registerAccount: Command = {
     accountCreateEmbed.setTitle(title);
     accountCreateEmbed.setDescription(description);
     accountCreateEmbed.setFields(message);
-    
+
     accountCreateEmbed.setAuthor({
       name: user.tag,
       iconURL: user.displayAvatarURL(),

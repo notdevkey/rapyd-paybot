@@ -1,6 +1,6 @@
 import { APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../interfaces/Command';
-import { PaymentCreate, Transaction } from "../service/models/payment";
+import { PaymentCreate } from '../service/models/payment';
 import PaymentService from '../service/paymentService';
 
 export const requestPayment: Command = {
@@ -40,21 +40,21 @@ export const requestPayment: Command = {
     if (!receiver) {
       // TODO: show no account error
       message = [
-        { name: 'Error', value: 'The receiver does not have an account' }
+        { name: 'Error', value: 'The receiver does not have an account' },
       ];
       title = 'Transaction Failed';
       description = `Hey, ${user.username}! The receiver of your transaction does not have an account!`;
       return;
-    } 
+    }
     // TODO: get user's and receiver's ewallets here
-    
-    // TODO: make transaction   
+
+    // TODO: make transaction
     const transaction: PaymentCreate = {
       sender: user.tag,
       amount: amount,
       receiver: receiver!.tag,
-      message: paymentMessage
-    }
+      message: paymentMessage,
+    };
     const paymentCreated = await paymentService.makeTransaction(transaction);
     // TODO: check if payment success
     // TODO: only for test purposes, remove sensitive data later
@@ -71,16 +71,12 @@ export const requestPayment: Command = {
       title = 'Transaction successful!';
       description = `Hey, ${user.username}! The money has been successfully sent to ${receiver.username}!`;
     } else if (paymentCreated.status != null) {
-      message = [
-        { name: 'Error', value: paymentCreated.status.message }
-      ];
+      message = [{ name: 'Error', value: paymentCreated.status.message }];
       title = 'Transactiond Failed';
       description = `Hey, ${user.username}! Some error occured when creating Transaction to ${receiver.username}!`;
     } else {
       // TODO: introduce proper error handling
-      message = [
-        { name: 'Error', value: 'unknown error' }
-      ];
+      message = [{ name: 'Error', value: 'unknown error' }];
       title = 'Transactiond Failed';
       description = `Hey, ${user.username}! Some error occured when creating Transaction to ${receiver.username}!`;
     }
