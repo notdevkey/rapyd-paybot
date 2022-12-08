@@ -2,7 +2,10 @@
 
 import { Request, Response } from 'express';
 import { paymentCreated, paymentResponded } from '../constants';
-import { TransactionWebhookResponse, WebhookType } from '../../models/webhook.model';
+import {
+  TransactionWebhookResponse,
+  WebhookType,
+} from '../../models/webhook.model';
 
 import * as amqp from 'amqplib/callback_api';
 
@@ -20,19 +23,17 @@ export const paymentWebhook = async (
       connection.createChannel((err1, channel) => {
         if (err1) throw err1;
 
-        switch (req.body.type) {
-          case WebhookType.TRANSFER_FUNDS_BETWEEN_EWALLETS_CREATED:
-            channel.sendToQueue(
-              paymentCreated,
-              Buffer.from(JSON.stringify(req.body))
-            );
-            break;
-          case WebhookType.TRANSFER_FUNDS_BETWEEN_EWALLETS_RESPONSE:
-            channel.sendToQueue(
-              paymentResponded,
-              Buffer.from(JSON.stringify(req.body))
-            );
-            break;
+        if (req.body.type == 'TRANSFER_FUNDS_BETWEEN_EWALLETS_CREATED') {
+          channel.sendToQueue(
+            paymentCreated,
+            Buffer.from(JSON.stringify(req.body))
+          );
+        }
+        if (req.body.type == 'TRANSFER_FUNDS_BETWEEN_EWALLETS_RESPONSE') {
+          channel.sendToQueue(
+            paymentResponded,
+            Buffer.from(JSON.stringify(req.body))
+          );
         }
       });
 

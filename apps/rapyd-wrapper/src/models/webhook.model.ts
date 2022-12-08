@@ -1,7 +1,7 @@
 export interface TransactionWebhookResponse {
   id: string;
   data: TransactionWebhookData;
-  type: WebhookType;
+  type: string;
   status: string;
   created_at: number;
   trigger_operation_id: string;
