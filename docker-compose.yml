@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 services:
   pocketbase:
@@ -8,5 +8,18 @@ services:
       - 8090:8090
     volumes:
       - pocketbase-data:/pb_data
+  postgres:
+    image: postgres:14.1
+    container_name: rapyd-paybot-db
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5431:5432 # Expose pg on port 5431 to not collide with pg from elsewhere
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
 volumes:
+  postgres-data:
+    driver: local
   pocketbase-data:

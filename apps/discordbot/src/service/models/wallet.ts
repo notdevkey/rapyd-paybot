@@ -41,6 +41,7 @@ export interface EWalletCreate {
 export interface Contact {
   phone_number: string;
   email: string;
+  password: string;
   first_name: string;
   contact_type: string;
 }
@@ -51,6 +52,7 @@ export interface CustomerCreate {
   phone_number: string;
   email: string;
   username: string;
+  password: string;
 }
 
 // update (WRAPPER API)

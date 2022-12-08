@@ -5,12 +5,12 @@ import {
   Transaction,
 } from './models/payment';
 
-import WalletService from './walletService';
 import { retrieveCustomer } from './pocketbaseService';
+import WalletService from './walletService';
 
-import { RapydResponse } from './models/rapydResponse';
 import axios, { AxiosInstance } from 'axios';
 import { validateEnv } from '../utils/validate-env';
+import { RapydResponse } from './models/rapydResponse';
 
 class PaymentService {
   private uri!: string;
@@ -35,7 +35,7 @@ class PaymentService {
       const receiverAccount = await retrieveCustomer(transaction.receiver); // must return Lisais83's wallet
 
       // check if both sender and receiver accounts exist
-      if (senderAccount == null || receiverAccount == null) {
+      if (!senderAccount || !receiverAccount) {
         // TODO: return correct error response
         return {} as RapydResponse<Transaction>;
       }
