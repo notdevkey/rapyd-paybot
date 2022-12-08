@@ -1,6 +1,7 @@
 import { Express, Request, Response } from 'express';
 import { createPaymentHandler, retrievePaymentHandler, setPaymentStatusHandler } from './app/controllers/payment.controller';
 import { createWalletHandler, retrieveWalletHandler } from './app/controllers/wallet.controller';
+import { createPaymentWebhook } from './app/controllers/webhook.controller';
 
 import validateResource from './app/middleware/validateResource';
 import { createPaymentSchema, retrievePaymentSchema, setPaymentStatusSchema } from './app/schema/payment.schema';
@@ -19,6 +20,8 @@ const routes = (app: Express) => {
   
   app.post('/api/payments/status', validateResource(setPaymentStatusSchema), setPaymentStatusHandler);
 
+  // webhook endpoints
+  app.post('/api/webhook/payment/created', createPaymentWebhook);
 }
 
 export default routes;
