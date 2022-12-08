@@ -8,6 +8,21 @@ services:
       - 8090:8090
     volumes:
       - pocketbase-data:/pb_data
+  rabbitmq:
+    image: rabbitmq:3.9.13-management-alpine
+    container_name: 'rabbitmq'
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - rabbitmq_go_net
+networks:
+  rabbitmq_go_net:
+    driver: bridge
   postgres:
     image: postgres:14.1
     container_name: rapyd-paybot-db

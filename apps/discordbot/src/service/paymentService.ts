@@ -1,4 +1,5 @@
 import {
+  PaymentApprove,
   PaymentCreate,
   RapydTransactionCreate,
   RapydTransactionMetadata,
@@ -104,6 +105,37 @@ class PaymentService {
 
     // TODO: return correct error response
     return {} as RapydResponse<Transaction>;
+  };
+
+  public approveTransaction = async (
+    transactionApprove: PaymentApprove
+  ): Promise<RapydResponse<Transaction>> => {
+    try {
+      console.log('Payment to be approved:', transactionApprove);
+
+      let paymentResponse: RapydResponse<Transaction> | null;
+      await this.client
+        .post<RapydResponse<Transaction>>('/payments/status', transactionApprove)
+        .then((response) => {
+          paymentResponse = response.data;
+          console.log('Payment response: ', paymentResponse.data);
+          console.log(paymentResponse.status);
+        })
+        .catch((e) => {
+          if (axios.isAxiosError(e)) {
+            console.error(e.message);
+          } else {
+            console.error('Unexpected Error occurerd');
+          }
+          paymentResponse = e;
+        });
+
+      return paymentResponse!;
+    } catch (e) {
+      console.log(e);
+      // TODO: return correct error response
+      return {} as RapydResponse<Transaction>;
+    }
   };
 }
 

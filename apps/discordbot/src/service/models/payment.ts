@@ -31,3 +31,9 @@ export interface PaymentCreate {
   receiver: string;
   message: string;
 }
+
+// approve
+export interface PaymentApprove {
+  id: string;
+  status: string;
+}

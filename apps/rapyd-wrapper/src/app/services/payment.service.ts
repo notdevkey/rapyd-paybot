@@ -1,6 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
-import { Transaction, TransactionCreate } from '../../models/payment.model';
+import {
+  Transaction,
+  TransactionCreate,
+  TransactionSetStatus,
+} from '../../models/payment.model';
 import RapydResponse from '../../models/rapyd.model';
 
 import { validateEnv } from '../../utils/validate-env';
@@ -86,6 +90,43 @@ export const retrievePayment = async (
     // });
 
     return paymentRetrieved;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+export const setPaymentStatus = async (
+  paymentStatus: TransactionSetStatus
+): Promise<RapydResponse<Transaction>> => {
+  try {
+    console.log(paymentStatus);
+
+    if (!validateEnv) return;
+
+    const client = axios.create({
+      baseURL: process.env.BASE_URI,
+    });
+
+    //let paymentCreated: RapydResponse<Transaction>;
+
+    const { data: paymentStatusUpdated } = await client.post<
+      RapydResponse<Transaction>
+    >('/account/transfer/response', paymentStatus, {
+      headers: getRequestHeaders(
+        'post',
+        '/v1/account/transfer/response',
+        JSON.parse(JSON.stringify(paymentStatus))
+      ),
+    });
+
+    // .then((response) => {
+    //   paymentCreated = response.data;
+    // })
+    // .catch((e) => {
+    //   console.error(e);
+    // });
+
+    return paymentStatusUpdated;
   } catch (e) {
     throw new Error(e);
   }

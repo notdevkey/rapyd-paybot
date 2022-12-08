@@ -2,7 +2,11 @@ import { Express, Request, Response } from 'express';
 import {
   createPaymentHandler,
   retrievePaymentHandler,
+  setPaymentStatusHandler,
 } from './app/controllers/payment.controller';
+import {
+  paymentWebhook,
+} from './app/controllers/webhook.controller';
 import {
   createWalletHandler,
   deleteWalletHandler,
@@ -14,6 +18,7 @@ import validateResource from './app/middleware/validateResource';
 import {
   createPaymentSchema,
   retrievePaymentSchema,
+  setPaymentStatusSchema
 } from './app/schema/payment.schema';
 import {
   createWalletSchema,
@@ -58,6 +63,15 @@ const routes = (app: Express) => {
     validateResource(retrievePaymentSchema),
     retrievePaymentHandler
   );
+
+  app.post(
+    '/api/payments/status',
+    validateResource(setPaymentStatusSchema),
+    setPaymentStatusHandler
+  );
+
+  // webhook endpoints
+  app.post('/api/webhook/payment', paymentWebhook);
 };
 
 export default routes;
