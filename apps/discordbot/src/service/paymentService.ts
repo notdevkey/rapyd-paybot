@@ -41,9 +41,6 @@ class PaymentService {
         return {} as RapydResponse<Transaction>;
       }
 
-      console.log(senderAccount.ewallet);
-      console.log(receiverAccount.ewallet);
-
       // check if both sender and receiver wallets exist
       const senderWallet = await this.walletService.retrieveEWallet(
         senderAccount.ewallet
@@ -70,8 +67,6 @@ class PaymentService {
         destination_ewallet: receiverWallet.data.id,
         //metadata: paymentToCreateMetadata,
       };
-
-      console.log('Payment to be made:', paymentToCreate);
 
       let paymentResponse: RapydResponse<Transaction> | null;
       await this.client
@@ -115,7 +110,10 @@ class PaymentService {
 
       let paymentResponse: RapydResponse<Transaction> | null;
       await this.client
-        .post<RapydResponse<Transaction>>('/payments/status', transactionApprove)
+        .post<RapydResponse<Transaction>>(
+          '/payments/status',
+          transactionApprove
+        )
         .then((response) => {
           paymentResponse = response.data;
           console.log('Payment response: ', paymentResponse.data);

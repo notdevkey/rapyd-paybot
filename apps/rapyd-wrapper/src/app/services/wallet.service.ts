@@ -1,19 +1,21 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-import RapydResponse from '../../models/rapyd.model';
+import RapydResponse, { RapydAxiosError } from '../../models/rapyd.model';
 import { Wallet, WalletCreate } from '../../models/wallet.model';
 
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 import { PrismaClient } from '@prisma/client';
+import { Response } from 'express';
 import { validateEnv } from '../../utils/validate-env';
 import { getRequestHeaders } from './rapyd.service';
 
 const prisma = new PrismaClient();
 
 export const createWallet = async (
-  wallet: WalletCreate
-): Promise<RapydResponse<Wallet>> => {
+  wallet: WalletCreate,
+  res: Response
+): Promise<RapydResponse<Wallet> | void> => {
   try {
     // TODO: create user here
 
@@ -23,8 +25,7 @@ export const createWallet = async (
       baseURL: process.env.BASE_URI,
     });
 
-    let walletCreated: RapydResponse<Wallet>;
-    await client
+    return await client
       .post<RapydResponse<Wallet>>('/user', wallet, {
         headers: getRequestHeaders(
           'post',
@@ -41,13 +42,11 @@ export const createWallet = async (
             password: wallet.contact.password,
           },
         });
-        walletCreated = response.data;
+        return response.data;
       })
-      .catch((e: AxiosError) => {
-        console.error(e.response);
+      .catch((e: RapydAxiosError) => {
+        res.status(401).send(e.response.data.status);
       });
-
-    return walletCreated;
   } catch (e) {
     throw new Error(e);
   }
