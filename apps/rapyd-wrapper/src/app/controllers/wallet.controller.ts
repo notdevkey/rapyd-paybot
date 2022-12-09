@@ -34,8 +34,10 @@ export const createWalletHandler = async (
       contact: contactToCreate,
     };
 
-    const wallet = await createWallet(walletToCreate);
-    return res.send(wallet);
+    const wallet = await createWallet(walletToCreate, res);
+    if (wallet) {
+      return res.send(wallet);
+    }
   } catch (e) {
     console.log(e);
     return res.status(500).send(e.message);

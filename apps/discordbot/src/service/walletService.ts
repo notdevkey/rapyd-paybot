@@ -1,6 +1,6 @@
 import Pocketbase from 'pocketbase';
 import { validateEnv } from '../utils/validate-env';
-import { RapydResponse } from './models/rapydResponse';
+import { RapydError, RapydResponse } from './models/rapydResponse';
 import {
   Contact,
   CustomerCreate,
@@ -8,7 +8,7 @@ import {
   EWalletCreate,
 } from './models/wallet';
 
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosError, AxiosInstance } from 'axios';
 
 class WalletService {
   private uri!: string;
@@ -26,7 +26,7 @@ class WalletService {
 
   public createEWallet = async (
     customerData: CustomerCreate
-  ): Promise<RapydResponse<EWallet>> => {
+  ): Promise<RapydResponse<EWallet> | RapydError | undefined> => {
     const walletContact: Contact = {
       phone_number: customerData.phone_number,
       email: customerData.email,
@@ -41,11 +41,14 @@ class WalletService {
       contact: walletContact,
     };
 
-    const { data: walletResponse } = await this.client.post<
-      RapydResponse<EWallet>
-    >('/wallets', walletToCreate);
+    const walletResponse = await this.client
+      .post<RapydResponse<EWallet>>('/wallets', walletToCreate)
+      .then((res) => res.data)
+      .catch((e: AxiosError<RapydError>) => {
+        return e.response?.data;
+      });
 
-    return walletResponse!;
+    return walletResponse;
   };
 
   public retrieveEWallet = async (

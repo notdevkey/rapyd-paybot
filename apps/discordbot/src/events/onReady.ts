@@ -16,6 +16,6 @@ export const onReady = async (bot: Client) => {
     { body: commandData }
   );
 
-  bot.user?.setActivity('with your balls', { type: ActivityType.Playing });
+  bot.user?.setActivity('Rapyd API', { type: ActivityType.Playing });
   console.log(`${bot.user?.tag} bot running!`);
 };

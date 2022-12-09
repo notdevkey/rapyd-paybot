@@ -1,5 +1,6 @@
 import { APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../interfaces/Command';
+import { RapydErrorCode } from '../service/models/rapydResponse';
 
 import { CustomerCreate } from '../service/models/wallet';
 
@@ -59,8 +60,29 @@ export const registerAccount: Command = {
     let description: string = '';
     const walletCreated = await walletService.createEWallet(userToCreate);
 
-    // TODO: test code, remove later
+    const accountCreateEmbed = new EmbedBuilder();
+
+    if (!walletCreated) return;
+    if (!('data' in walletCreated)) {
+      if (
+        walletCreated.error_code ===
+        RapydErrorCode.ERROR_CREATE_USER_EWALLET_REFERENCE_ID_ALREADY_EXISTS
+      ) {
+        message = [
+          {
+            name: 'Message',
+            value: 'Account already exists',
+          },
+        ];
+        accountCreateEmbed.setTitle('Account already exists');
+        accountCreateEmbed.setFields(message);
+        await interaction.editReply({ embeds: [accountCreateEmbed] });
+      }
+      return;
+    }
+
     if (walletCreated.data != null) {
+      // TODO: test code, remove later
       const result = walletCreated.data;
       message = [
         { name: 'Wallet status', value: result.status },
@@ -77,7 +99,6 @@ export const registerAccount: Command = {
       description = `Hey, ${user.username}! Some error occured when creating Rapyd Paybot account!`;
     }
 
-    const accountCreateEmbed = new EmbedBuilder();
     accountCreateEmbed.setTitle(title);
     accountCreateEmbed.setDescription(description);
     accountCreateEmbed.setFields(message);
