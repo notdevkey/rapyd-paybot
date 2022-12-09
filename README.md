@@ -1,10 +1,10 @@
 # Rapyd Paybot
 Discord bot for managing paid community events, membership, roles &amp; more!
 
-<p align="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/OBqL3N08YRk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</p>
 We empower Discord communities through payments directly in Discord.
+
+## Watch the video
+[![Video](https://img.youtube.com/vi/OBqL3N08YRk/0.jpg)](https://www.youtube.com/watch?v=OBqL3N08YRk)
 
 ### Motivation
 
